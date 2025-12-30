@@ -1,0 +1,123 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  name           String?
+  email          String?  @unique
+  password       String
+  role           String   @default("employee")
+  department     String?
+  clearance      String   @default("Public")
+  failedLogins   Int      @default(0)
+  lockedUntil    DateTime?
+  emailVerified  Boolean  @default(false)
+  otpCode        String?
+  otpExpiresAt   DateTime?
+  resetToken     String?
+  resetTokenExpiry DateTime?
+  logs           Log[]
+  borrowRequests BorrowRequest[]
+  ownedEquipment Equipment[]
+  approvedRequests BorrowRequest[] @relation("ApprovedBy")
+  roleRequests   RoleChangeRequest[] @relation("RoleRequests")
+  reviewedRoleChanges RoleChangeRequest[] @relation("RoleReviewer")
+  alerts         Alert[]
+  equipmentPermissions EquipmentPermission[] @relation("PermissionGrantee")
+  grantedPermissions   EquipmentPermission[] @relation("PermissionGranter")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt @default(now())
+}
+
+model Equipment {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String?
+  quantity    Int
+  sensitivity String @default("Public")
+  ownerId     Int?
+  owner       User?  @relation(fields: [ownerId], references: [id])
+  requests    BorrowRequest[]
+  permissions EquipmentPermission[]
+}
+
+model BorrowRequest {
+  id            Int      @id @default(autoincrement())
+  status        String   @default("Pending")
+  userId        Int
+  equipmentId   Int
+  approvedById  Int?
+  createdAt     DateTime @default(now())
+  approvedAt    DateTime?
+  returnedAt    DateTime?
+
+  user        User      @relation(fields: [userId], references: [id])
+  equipment   Equipment @relation(fields: [equipmentId], references: [id])
+  approvedBy  User?     @relation("ApprovedBy", fields: [approvedById], references: [id])
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  action    String
+  encrypted Boolean  @default(true)
+  timestamp DateTime @default(now())
+  userId    Int?
+  ipAddress String?
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+model RoleChangeRequest {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  currentRole   String
+  requestedRole String
+  reason        String?
+  status        String   @default("Pending")
+  requestedAt   DateTime @default(now())
+  reviewedAt    DateTime?
+  reviewedById  Int?
+  
+  user          User     @relation("RoleRequests", fields: [userId], references: [id])
+  reviewedBy    User?    @relation("RoleReviewer", fields: [reviewedById], references: [id])
+}
+
+model Alert {
+  id          Int      @id @default(autoincrement())
+  type        String
+  severity    String
+  message     String
+  userId      Int?
+  ipAddress   String?
+  resolved    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  resolvedAt  DateTime?
+  
+  user        User?    @relation(fields: [userId], references: [id])
+}
+
+model SystemConfig {
+  key   String @id
+  value String
+}
+
+model EquipmentPermission {
+  id          Int       @id @default(autoincrement())
+  equipmentId Int
+  userId      Int
+  canEdit     Boolean   @default(true)
+  canDelete   Boolean   @default(true)
+  grantedAt   DateTime  @default(now())
+  grantedById Int
+  
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+  user        User      @relation("PermissionGrantee", fields: [userId], references: [id], onDelete: Cascade)
+  grantedBy   User      @relation("PermissionGranter", fields: [grantedById], references: [id])
+  
+  @@unique([equipmentId, userId])
+}

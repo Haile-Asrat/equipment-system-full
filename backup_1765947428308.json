@@ -1,0 +1,78 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Admin",
+      "email": "admin@example.com",
+      "password": "$2b$10$iwWjHmFij5PG5Lo6XbUQFOKuY3EUDmoKjbmtLQEYdEG8t399CzIkC",
+      "role": "admin",
+      "department": null,
+      "clearance": "Confidential",
+      "failedLogins": 0,
+      "lockedUntil": null,
+      "emailVerified": true,
+      "otpCode": null,
+      "otpExpiresAt": null,
+      "resetToken": null,
+      "resetTokenExpiry": null,
+      "createdAt": "2025-12-09T22:25:56.797Z",
+      "updatedAt": "2025-12-17T04:27:12.367Z"
+    },
+    {
+      "id": 10,
+      "name": "haile",
+      "email": "haile@employee.com",
+      "password": "$2b$10$BLWWtDlRRS1tyqzHy3M3QuSb1E.eU0w4Q.SsnUR5zmofgnZ2N0Shq",
+      "role": "manager",
+      "department": null,
+      "clearance": "Public",
+      "failedLogins": 0,
+      "lockedUntil": null,
+      "emailVerified": true,
+      "otpCode": null,
+      "otpExpiresAt": null,
+      "resetToken": null,
+      "resetTokenExpiry": null,
+      "createdAt": "2025-12-16T17:50:32.441Z",
+      "updatedAt": "2025-12-17T04:29:53.767Z"
+    }
+  ],
+  "equipment": [
+    {
+      "id": 2,
+      "name": "Laptop",
+      "description": "",
+      "quantity": 1,
+      "sensitivity": "Secret",
+      "ownerId": 1
+    },
+    {
+      "id": 3,
+      "name": "Camera",
+      "description": "",
+      "quantity": 1,
+      "sensitivity": "Public",
+      "ownerId": 1
+    },
+    {
+      "id": 4,
+      "name": "Printer",
+      "description": "",
+      "quantity": 1,
+      "sensitivity": "Confidential",
+      "ownerId": 1
+    }
+  ],
+  "requests": [
+    {
+      "id": 5,
+      "status": "Pending",
+      "userId": 10,
+      "equipmentId": 3,
+      "approvedById": null,
+      "createdAt": "2025-12-16T20:04:38.360Z",
+      "approvedAt": null,
+      "returnedAt": null
+    }
+  ]
+}
